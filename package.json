@@ -1,0 +1,29 @@
+{
+  "name": "roster-app",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.2",
+    "express-session": "^1.15.3",
+    "pg": "^6.2.2",
+    "pug": "^2.0.0-rc.1",
+    "pug-bootstrap": "0.0.15",
+    "sequelize": "^3.30.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/omarade/RosterApp-groupProject.git"
+  },
+  "bugs": {
+    "url": "https://github.com/omarade/RosterApp-groupProject/issues"
+  },
+  "homepage": "https://github.com/omarade/RosterApp-groupProject#readme",
+  "description": ""
+}
