@@ -31,12 +31,40 @@ var Roster = db.define('roster', {
 	fri: {type: Sequelize.STRING, allowNull: false}
 })
 
-User.HasOne(Roster)
+User.hasOne(Roster)
 Roster.belongsTo(User)
 
 
 
 db.sync({force: true});
+
+
+// login route
+
+app.get('/login', function(request, response) {
+
+
+
+  response.render ("logIn")
+});
+
+app.post('/login', function(request, response) {
+
+
+
+
+  response.render ("logIn")
+});
+
+
+app.get('/addWorker', function(request, response) {
+
+  response.render ("addWorker")
+});
+
+// add worker routs
+
+
 
 
 const listener = app.listen(3000, function () {
