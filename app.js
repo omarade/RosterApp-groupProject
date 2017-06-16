@@ -31,6 +31,9 @@ var Roster = db.define('roster', {
 	fri: {type: Sequelize.STRING, allowNull: false}
 })
 
+User.HasOne(Roster)
+Roster.belongsTo(User)
+
 
 
 db.sync({force: true});
