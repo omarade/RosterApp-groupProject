@@ -3,22 +3,30 @@ const app = express();
 const bodyParser = require('body-parser');
 const pg = require('pg');
 const Sequelize = require('sequelize');
-const db = new Sequelize(`postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`); 
+const bcrypt = require('bcrypt');
+// const db = new Sequelize(`postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`);
+const db = new Sequelize('postgres://SHMUEL:5432 @localhost/bulletinboard');
+
 const session = require('express-session');
 
+
+app.set('views', 'src/views');
+app.set('view engine', 'pug');
 app.use('/', bodyParser()); //creates key-value pairs request.body in app.post, e.g. request.body.username
 app.use(express.static('src/public'));
-app.use(session({
-	secret: process.env.secret,
-	resave: true,
-	saveUninitialized: false
-}));
+
+// app.use(session({
+// 	secret: process.env.secret,
+// 	resave: true,
+// 	saveUninitialized: false
+// }));
 
 // Create model user
 var User = db.define('user', {
 	name: {type: Sequelize.STRING, allowNull: false},
 	email: {type: Sequelize.STRING, allowNull: false, uniqe: true},
-	password: {type: Sequelize.STRING, allowNull: false}
+	password: {type: Sequelize.STRING, allowNull: false},
+	isAdmin: {type: Sequelize.BOOLEAN, allowNull: false}
 })
 
 // Create model roster
@@ -50,6 +58,36 @@ app.get('/login', function(request, response) {
 
 app.post('/login', function(request, response) {
 
+	let email = request.body.email
+	let password = request.body.password
+
+	console.log(email);
+	console.log(password);
+
+
+		User.findOne({
+			where: {
+				email: email
+				}
+			})
+	
+		.then( (user) => {
+		 
+			 	var hash =  user.password
+
+				  bcrypt.compare(password, hash, function(err, result) {
+
+					 		if(result === true){
+
+					 			// req.session.user = user;
+
+					 			response.render('addWorker'); 
+					 		}
+
+					});
+				
+		});
+
 
 
 
@@ -57,12 +95,39 @@ app.post('/login', function(request, response) {
 });
 
 
+// add worker routs
 app.get('/addWorker', function(request, response) {
 
   response.render ("addWorker")
 });
 
-// add worker routs
+
+app.post('/addWorker', function(request, response) {
+
+	let name = request.body.names
+	let email = request.body.email
+	let password = request.body.password
+	let type = request.body.type
+	console.log(name);
+	console.log(email);
+	console.log(password);
+	console.log(type);
+
+	bcrypt.hash(password, 10, function(err, hash) {
+
+		User.create({
+		name: name ,
+		email: email,
+		password: hash,
+		isAdmin: type
+		})
+	.then( () => {
+		response.render ('addWorker') 
+		})
+	})
+});
+
+
 
 
 
