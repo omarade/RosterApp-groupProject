@@ -6,7 +6,16 @@ html(lang='en')
 	body
 
 		//- the Form that adds to the roster table goes here
-		
+		.container
+			.row
+				.col-lg-8
+					form(action='/task' method='post')
+						.col-lg-4
+							label Task
+							textarea.form-control#new_comment(rows='1', placeholder='Comment' , name='task')
+							br
+							button.btn.btn-default(type='submit') Submit
+
 
 		script(src='/js/jquery.min.js')
 		script(src='/js/bootstrap.min.js')
