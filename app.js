@@ -31,12 +31,21 @@ var Roster = db.define('roster', {
 	fri: {type: Sequelize.STRING, allowNull: false}
 })
 
-User.HasOne(Roster)
+User.hasOne(Roster)
 Roster.belongsTo(User)
 
 
 
 db.sync({force: true});
+									/* roster */
+app.get('/roster', (req,res) =>{
+	User.findAll({
+		include: [Roster]
+	})
+	.then((user) =>{
+		res.render('roster', {user: user})
+	})
+})
 
 
 const listener = app.listen(3000, function () {

@@ -1,0 +1,80 @@
+html(lang='en')
+  head
+    title Jade
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet', href='https://bootswatch.com/cosmo/bootstrap.min.css')
+    link(rel='stylesheet', href='css/roster.css')
+  body
+    .container
+      .row
+        br
+        br
+        .col-lg-4
+          a#showNames.btn.btn-sm.btn-primary(href='#') Show Full Names
+          a#hideNames.btn.btn-sm.btn-danger(href='#') Hide Full Names
+        .col-lg-4
+          input#search.form-control(type='search', name='search', value='', placeholder='Search')
+        br
+        br
+      .row
+        .col-lg-12
+          table#roster-table.table.table-bordered
+            thead
+              tr.bg-primary
+                th(style='width: 180px; text-align: left;') Location
+                th Mon
+                th Tues
+                th Wed
+                th Thurs
+                th Fri
+            tbody.context
+              tr
+                td.info(style='text-align: left;') Mater Brisbane (MMB)
+                td
+                  span.initials(data-toggle='tooltip', data-placement='right', title='Robert Clarke') RC 
+                  span.hidden.fullName Robert Clarke
+                td
+                  span.hidden.fullName
+                td
+                  span.hidden.fullName
+                td
+                  span.hidden.fullName
+                td
+                  span.initials(data-toggle='tooltip', data-placement='right', title='Lora Medoro') LM 
+                  span.hidden.fullName Lora Medoro
+              tr
+                td.info(style='text-align: left;') Coorparoo (COO)
+                td
+                  span.initials(data-toggle='tooltip', data-placement='right', title='Sanjay Dhupelia') SD 
+                  span.hidden.fullName Sanjay Dhupelia
+                td
+                  span.hidden.fullName
+                td
+                  span.hidden.fullName
+                td
+                  span.hidden.fullName
+                td
+                  span.initials(data-toggle='tooltip', data-placement='right', title='Todd Staria') TXS 
+                  span.hidden.fullName Todd Staria
+              tr
+                td.info(style='text-align: left;') Beenleigh (BNL)
+                td
+                  span.hidden.fullName
+                td
+                  span.initials(data-toggle='tooltip', data-placement='right', title='Thomas Martin') TWM 
+                  span.hidden.fullName Thomas Martin
+                td
+                  span.initials(data-toggle='tooltip', data-placement='right', title='Lora Medoro') LM 
+                  span.hidden.fullName Lora Medoro
+                td
+                  span.initials(data-toggle='tooltip', data-placement='right', title='Sunil Kaniyur') SXK 
+                  span.hidden.fullName Sunil Kaniyur
+                td
+                  span.initials(data-toggle='tooltip', data-placement='right', title='Piyoosh Kotecha') PK 
+                  span.hidden.fullName Piyoosh Kotecha
+          hr
+    script(src='//rawgithub.com/stidges/jquery-searchable/master/dist/jquery.searchable-1.0.0.min.js')
+    script(src='https://cdn.jsdelivr.net/mark.js/8.6.0/jquery.mark.min.js')
+    script(src='js/jquery.min.js')
+    script(src='js/bootstrap.min.js')
+    script(src='js/roster.js')
