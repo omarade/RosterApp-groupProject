@@ -1,0 +1,23 @@
+doctype html
+html(lang='en')
+	head
+		link(href='css/bootstrap.min.css' type='text/css' rel='stylesheet')
+		link(href='css/bootstrap-theme.min.css' type='text/css' rel='stylesheet')
+	body
+
+		//- the Form that adds to the roster table goes here
+		.container
+			.row
+				.col-lg-8
+					form(action='/time/' + task, method='post')
+						.col-lg-4
+							label From
+							textarea.form-control#new_comment(rows='1', placeholder='Comment' , name='from')
+							label To
+							textarea.form-control#new_comment(rows='1', placeholder='Comment' , name='to')
+							br
+							button.btn.btn-default(type='submit') Submit
+
+
+		script(src='/js/jquery.min.js')
+		script(src='/js/bootstrap.min.js')
