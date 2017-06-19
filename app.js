@@ -69,9 +69,10 @@ app.post('/login', function(request, response) {
 			where: {
 				email: email
 				}
-			})
-	
+		})
 		.then( (user) => {
+
+			console.log(user)
 		 
 			 	var hash =  user.password
 
@@ -87,11 +88,6 @@ app.post('/login', function(request, response) {
 					});
 				
 		});
-
-
-
-
-  response.render ("logIn")
 });
 
 
@@ -122,7 +118,7 @@ app.post('/addWorker', function(request, response) {
 		isAdmin: type
 		})
 	.then( () => {
-		response.render ('addWorker') 
+		response.render ('logIn') 
 		})
 	})
 });
