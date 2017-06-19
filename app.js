@@ -3,19 +3,24 @@ const app = express();
 const bodyParser = require('body-parser');
 const pg = require('pg');
 const Sequelize = require('sequelize');
-const db = new Sequelize(`postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`); 
+const bcrypt = require('bcrypt');
+const db = new Sequelize(`postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`);
+
 const session = require('express-session');
+
 
 app.set('views', __dirname + '/src/views');
 app.set('view engine', 'pug');
 
 app.use('/', bodyParser()); //creates key-value pairs request.body in app.post, e.g. request.body.username
 app.use(express.static('src/public'));
-app.use(session({
-	secret: 'not a secret',
-	resave: true,
-	saveUninitialized: false
-}));
+
+// app.use(session({
+// 	secret: process.env.secret,
+// 	resave: true,
+// 	saveUninitialized: false
+// }));
+
 
 // Create model user
 const User = db.define('user', {
@@ -41,6 +46,9 @@ Time.belongsToMany(User, {through: 'time_user'})
 
 Task.hasMany(Time)
 Time.belongsTo(Task)
+
+User.hasMany(Time)
+Time.belongsTo(User)
 
 
 
@@ -74,17 +82,17 @@ app.post('/task', (req, res) =>{
 })
 
 									/* time */
-app.get("/time/:id", (req, res) => {
-	var task = req.params.id
+app.get("/time", (req, res) => {
+	var task = req.query.id
 	console.log("Task id from time get: " + task)
 
 	res.render("time", {task: task})
 })
 
-app.post('/time/:id', (req, res) => {
+app.post('/time', (req, res) => {
 	var from = req.body.from
 	var to = req.body.to
-	var taskId = req.params.id
+	var taskId = req.query.id
 	console.log('taskId '+ taskId)
 	console.log('reached')
 	Time.create({
@@ -97,6 +105,86 @@ app.post('/time/:id', (req, res) => {
 	})
 
 })
+
+
+
+// login route
+
+app.get('/login', function(request, response) {
+
+  response.render ("logIn")
+});
+
+app.post('/login', function(request, response) {
+
+	let email = request.body.email
+	let password = request.body.password
+
+	console.log(email);
+	console.log(password);
+
+
+		User.findOne({
+			where: {
+				email: email
+				}
+		})
+		.then( (user) => {
+
+			console.log(user)
+		 
+			 	var hash =  user.password
+
+				  bcrypt.compare(password, hash, function(err, result) {
+
+					 		if(result === true){
+
+					 			// req.session.user = user;
+
+					 			response.render('addWorker'); 
+					 		}
+
+					});
+				
+		});
+});
+
+
+// add worker routs
+app.get('/addWorker', function(request, response) {
+
+  response.render ("addWorker")
+});
+
+
+app.post('/addWorker', function(request, response) {
+
+	let name = request.body.names
+	let email = request.body.email
+	let password = request.body.password
+	let type = request.body.type
+	console.log(name);
+	console.log(email);
+	console.log(password);
+	console.log(type);
+
+	bcrypt.hash(password, 10, function(err, hash) {
+
+		User.create({
+		name: name ,
+		email: email,
+		password: hash,
+		isAdmin: type
+		})
+	.then( () => {
+		response.render ('logIn') 
+		})
+	})
+});
+
+
+
+
 
 										/* the server */
 const listener = app.listen(3000, function () {
