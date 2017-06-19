@@ -12,7 +12,7 @@ app.set('view engine', 'pug');
 app.use('/', bodyParser()); //creates key-value pairs request.body in app.post, e.g. request.body.username
 app.use(express.static('src/public'));
 app.use(session({
-	secret: process.env.secret,
+	secret: 'not a secret',
 	resave: true,
 	saveUninitialized: false
 }));
@@ -30,6 +30,7 @@ const Task = db.define('task', {
 	name: {type: Sequelize.STRING, allowNull: false}
 })
 
+// Create model time
 const Time = db.define('time', {
 	from: {type: Sequelize.DATE, allowNull: false},
 	to: {type: Sequelize.DATE, allowNull: false}
@@ -43,18 +44,20 @@ Time.belongsTo(Task)
 
 
 
-
 db.sync({force: true});
+
+
+
 									/* roster */
 app.get('/roster', (req,res) =>{
-	User.findAll({
-		include: [Roster]
-	})
+	User.findAll()
 	.then((user) =>{
-		res.render('roster', {user: user})
+		console.log('user'+ user[0])
+		res.render('roster', {users: user})
 	})
 })
 
+									/* task */
 app.get('/task', (req,res) =>{
 	res.render('task')
 })
@@ -70,6 +73,7 @@ app.post('/task', (req, res) =>{
 	})
 })
 
+									/* time */
 app.get("/time/:id", (req, res) => {
 	var task = req.params.id
 	console.log("Task id from time get: " + task)
@@ -94,8 +98,7 @@ app.post('/time/:id', (req, res) => {
 
 })
 
-
-
+										/* the server */
 const listener = app.listen(3000, function () {
 	console.log('Example app listening on port: ' + listener.address().port);
 });
