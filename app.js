@@ -38,9 +38,11 @@ const Time = db.define('time', {
 User.belongsToMany(Time, {through: 'time_user'})
 Time.belongsToMany(User, {through: 'time_user'})
 
-
 Task.hasMany(Time)
 Time.belongsTo(Task)
+
+User.hasMany(Time)
+Time.belongsTo(User)
 
 
 
@@ -61,17 +63,17 @@ app.post('/task', (req, res) =>{
 	})
 })
 
-app.get("/time/:id", (req, res) => {
-	var task = req.params.id
+app.get("/time", (req, res) => {
+	var task = req.query.id
 	console.log("Task id from time get: " + task)
 
 	res.render("time", {task: task})
 })
 
-app.post('/time/:id', (req, res) => {
+app.post('/time', (req, res) => {
 	var from = req.body.from
 	var to = req.body.to
-	var taskId = req.params.id
+	var taskId = req.query.id
 	console.log('taskId '+ taskId)
 	console.log('reached')
 	Time.create({

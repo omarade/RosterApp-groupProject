@@ -5,19 +5,30 @@ html(lang='en')
 		link(href='css/bootstrap-theme.min.css' type='text/css' rel='stylesheet')
 	body
 
-		//- the Form that adds to the roster table goes here
-		.container
+		.container(style='margin-top:70px;')
 			.row
-				.col-lg-8
-					form(action='/time/' + task, method='post')
-						.col-lg-4
-							label From
-							textarea.form-control#new_comment(rows='1', placeholder='Comment' , name='from')
-							label To
-							textarea.form-control#new_comment(rows='1', placeholder='Comment' , name='to')
-							br
-							button.btn.btn-default(type='submit') Submit
+				form.form-horizontal.col-sm-7.col-sm-offset-2(action='/time?id=' + task, method='post')
+					.form-group.registration-date
+						label.control-label.col-sm-3(for='registration-date') Date:
+						.input-group.registration-date-time
+							span#basic-addon1.input-group-addon
+								span.glyphicon.glyphicon-calendar(aria-hidden='true')
+							input#registration-date.form-control(name='registration_date', type='date')
+							span#basic-addon1.input-group-addon
+								span.glyphicon.glyphicon-time(aria-hidden='true')
+							input#registration-time.form-control(name='registration_time', type='time')
+							span.input-group-btn
+								button.btn.btn-default(type='button', onclick='addNow()')
+									span.glyphicon.glyphicon-map-marker(aria-hidden='true')
+									|  Now
+								button.btn.btn-default(type='button', onclick='stopNow()')
+									span.glyphicon.glyphicon-minus-sign(aria-hidden='true')
+									|  Stop
+
 
 
 		script(src='/js/jquery.min.js')
 		script(src='/js/bootstrap.min.js')
+		script(src='/js/time.js')
+		script(src="http://momentjs.com/downloads/moment-with-locales.js")
+		script(src="http://momentjs.com/downloads/moment-timezone-with-data.js")
