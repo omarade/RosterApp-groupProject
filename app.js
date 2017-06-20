@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
-const db = new Sequelize(`postgres://SHMUEL:5432@localhost/workrooster`);
+// const db = new Sequelize(`postgres://SHMUEL:5432@localhost/workrooster`);
 
 const session = require('express-session');
 
@@ -95,41 +95,29 @@ app.post('/time/:id', (req, res) => {
 // login route
 
 app.get('/login', function(request, response) {
-
   response.render ("logIn")
 });
 
 app.post('/login', function(request, response) {
-
 	let email = request.body.email
 	let password = request.body.password
 
 	console.log(email);
 	console.log(password);
-
-
 		User.findOne({
 			where: {
 				email: email
 				}
 		})
 		.then( (user) => {
-
 			console.log(user)
-		 
 			 	var hash =  user.password
-
 				  bcrypt.compare(password, hash, function(err, result) {
-
 					 		if(result === true){
-
 					 			// req.session.user = user;
-
 					 			response.render('adminroster'); 
 					 		}
-
 					});
-				
 		});
 });
 
