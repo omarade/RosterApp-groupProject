@@ -49,7 +49,7 @@ Time.belongsTo(Task)
 
 
 
-db.sync({force: true});
+db.sync({force: false});
 
 app.get('/task', (req,res) =>{
 	res.render('task')
@@ -90,8 +90,6 @@ app.post('/time/:id', (req, res) => {
 
 })
 
-
-
 // login route
 
 app.get('/login', function(request, response) {
@@ -110,13 +108,28 @@ app.post('/login', function(request, response) {
 				}
 		})
 		.then( (user) => {
-			console.log(user)
+			console.log(user.isAdmin)
+			var userType = user.isAdmin;
 			 	var hash =  user.password
 				  bcrypt.compare(password, hash, function(err, result) {
-					 		if(result === true){
-					 			// req.session.user = user;
-					 			response.render('adminroster'); 
-					 		}
+					 		if(result === true && userType === true){
+					 			// request.session.user = user;
+
+					 			// if(user.isAdmin === true){
+
+					 			response.render('adminroster'); }
+					 			else{ 
+
+					 			if(result === true && userType === false)
+
+								response.render('login');
+
+					 			}
+
+					 			// response.render('/'); // home pages
+
+			
+					 			
 					});
 		});
 });
