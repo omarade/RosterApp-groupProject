@@ -1,10 +1,22 @@
 html(lang='en')
   head
-    title Jade
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
-    link(rel='stylesheet', href='https://bootswatch.com/cosmo/bootstrap.min.css')
+    title roster
+    link(rel='stylesheet', href='css/bootstrap.min.css')
     link(rel='stylesheet', href='css/roster.css')
   body
+    nav.navbar.navbar-inverse
+      .container-fluid
+        .navbar-header
+          a.navbar-brand(href='adminhome') Time to Work
+        ul.nav.navbar-nav
+          li.active
+             a(href='adminhome') roaster
+          li
+            a(href='/task') Add new rooster
+          li
+            a(href='/addworker') Add new worker
+        button.btn.btn-danger.navbar-btn.pull-right
+          a(href='/login') logout
     .container
       .row
         br
@@ -26,20 +38,20 @@ html(lang='en')
                 th Fri
               tbody.context
                 each user in users
-                    tr
-                      td.info(style='text-align: left;') #{user.name}
-                      td
-                        span.initials(data-toggle='tooltip', data-placement='right', title='Robert Clarke') RC 
-                        span.hidden.fullName
-                      td
-                        span.hidden.fullName
-                      td
-                        span.hidden.fullName
-                      td
-                        span.hidden.fullName
-                      td
-                        span.initials(data-toggle='tooltip', data-placement='right', title='Lora Medoro') LM 
-                        span.hidden.fullName Lora Medoro
+                  each time in user.times
+                      tr
+                        td.info(style='text-align: left;') #{user.name}
+                        td  from: #{time.from} <br> To: #{time.to} <br> Task:
+                          span.initials(data-toggle='tooltip', data-placement='right', title='Robert Clarke')
+                          span.hidden.fullName
+                        td  from: #{time.from} <br> To: #{time.to}
+                          span.hidden.fullName
+                        td from: #{time.from} <br> To: #{time.to}
+                          span.hidden.fullName
+                        td from: #{time.from} <br> To: #{time.to}
+                          span.hidden.fullName
+                        td from: #{time.from} <br> To: #{time.to}
+                          span.initials(data-toggle='tooltip', data-placement='right', title='Lora Medoro')
     //- script(src='//rawgithub.com/stidges/jquery-searchable/master/dist/jquery.searchable-1.0.0.min.js')
     //- script(src='https://cdn.jsdelivr.net/mark.js/8.6.0/jquery.mark.min.js')
     script(src='js/jquery.min.js')

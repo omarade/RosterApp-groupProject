@@ -15,11 +15,11 @@ app.set('view engine', 'pug');
 app.use('/', bodyParser()); //creates key-value pairs request.body in app.post, e.g. request.body.username
 app.use(express.static('src/public'));
 
-// app.use(session({
-// 	secret: process.env.secret,
-// 	resave: true,
-// 	saveUninitialized: false
-// }));
+app.use(session({
+	secret: process.env.secret,
+	resave: true,
+	saveUninitialized: false
+}));
 
 
 // Create model user
@@ -41,31 +41,31 @@ const Time = db.define('time', {
 	to: {type: Sequelize.DATE, allowNull: false}
 })
 
+// Define the relationships
 User.belongsToMany(Time, {through: 'time_user'})
 Time.belongsToMany(User, {through: 'time_user'})
 
 Task.hasMany(Time)
 Time.belongsTo(Task)
 
-User.hasMany(Time)
-Time.belongsTo(User)
-
-
-
 db.sync({force: true});
-
-
 
 									/* roster */
 app.get('/roster', (req,res) =>{
-	User.findAll()
-	.then((user) =>{
-		console.log('user'+ user[0])
-		res.render('roster', {users: user})
+
+	User.findAll({
+		include: [{model: Time,
+			include: [{model: Task}]
+		}]
+	})
+	.then((users) =>{
+		console.log(users[0].times[0])
+		res.render('roster', {users: users})
 	})
 })
 
-									/* task */
+
+								/* task */
 app.get('/task', (req,res) =>{
 	res.render('task')
 })
@@ -86,7 +86,7 @@ app.get("/time", (req, res) => {
 	var task = req.query.id
 	console.log("Task id from time get: " + task)
 
-	res.render("time", {task: task})
+	res.render("time"/*, {task: task}*/)
 })
 
 app.post('/time', (req, res) => {
