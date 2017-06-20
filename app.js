@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
+
 const db = new Sequelize(`postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`);
 
 const session = require('express-session');
@@ -15,11 +16,11 @@ app.set('view engine', 'pug');
 app.use('/', bodyParser()); //creates key-value pairs request.body in app.post, e.g. request.body.username
 app.use(express.static('src/public'));
 
-// app.use(session({
-// 	secret: process.env.secret,
-// 	resave: true,
-// 	saveUninitialized: false
-// }));
+app.use(session({
+	secret: process.env.secret,
+	resave: true,
+	saveUninitialized: false
+}));
 
 // Create model user
 const User = db.define('user', {
@@ -36,8 +37,9 @@ const Task = db.define('task', {
 
 
 const Time = db.define('time', {
-	from: {type: Sequelize.DATE, allowNull: false},
-	to: {type: Sequelize.DATE, allowNull: false}
+	date: {type:Sequelize.DATEONLY, allowNull: false},
+	from: {type: Sequelize.TIME, allowNull: false},
+	to: {type: Sequelize.TIME, allowNull: false}
 })
 
 User.belongsToMany(Time, {through: 'time_user'})
@@ -46,8 +48,7 @@ Time.belongsToMany(User, {through: 'time_user'})
 Task.hasMany(Time)
 Time.belongsTo(Task)
 
-User.hasMany(Time)
-Time.belongsTo(User)
+
 
 
 
@@ -64,7 +65,7 @@ app.post('/task', (req, res) =>{
 	})
 	.then((task) => {
 		console.log(`Task id: ${task.id}`)
-		res.redirect(`/time/${task.id}`)
+		res.redirect('/time?id=' + task.id)
 	})
 })
 
@@ -76,12 +77,14 @@ app.get("/time", (req, res) => {
 })
 
 app.post('/time', (req, res) => {
+	var date = req.body.date
 	var from = req.body.from
 	var to = req.body.to
 	var taskId = req.query.id
 	console.log('taskId '+ taskId)
 	console.log('reached')
 	Time.create({
+		date: date,
 		from: from,
 		to: to,
 		taskId: taskId
