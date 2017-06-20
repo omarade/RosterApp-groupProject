@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
-const db = new Sequelize(`postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`);
+const db = new Sequelize(`postgres://SHMUEL:5432@localhost/workrooster`);
 
 const session = require('express-session');
 
@@ -125,13 +125,29 @@ app.post('/login', function(request, response) {
 
 					 			// req.session.user = user;
 
-					 			response.render('addWorker'); 
+					 			response.render('adminroster'); 
 					 		}
 
 					});
 				
 		});
 });
+
+
+
+// admin home route
+app.get('/adminhome', function(request, response) {
+
+  response.render ("adminhome")
+});
+
+
+app.get('/adminroster', function(request, response) {
+
+  response.render ("adminroster")
+});
+
+
 
 
 // add worker routs
@@ -165,9 +181,6 @@ app.post('/addWorker', function(request, response) {
 		})
 	})
 });
-
-
-
 
 
 

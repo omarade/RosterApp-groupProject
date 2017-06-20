@@ -8,26 +8,39 @@ html(lang='en')
     meta(name='viewport', content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0')
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
   body
-  #wrap.container
-  .row
-    .col-md-4.col-md-offset-4
+    nav.navbar.navbar-inverse
+      .container-fluid
+        .navbar-header
+          a.navbar-brand(href='adminhome') Time to Work
+        ul.nav.navbar-nav
+          li.active
+             a(href='adminhome') roaster
+          li
+            a(href='http://localhost:3000/task') Add new rooster
+          li
+            a(href='http://localhost:3000/addworker') Add new worker
+        button.btn.btn-danger.navbar-btn.pull-right
+          a(href='http://localhost:3000/login') logout 
+    #wrap.container
+    .row
+      .col-md-4.col-md-offset-4
 
-      form.form(action='/addWorker', method='post', accept-charset='utf-8', role='form')
-        legend Creat a new worker account here
-        input.form-control.input-lg(type='text', name='names', value='', placeholder='Name')
-        br
-        input.form-control.input-lg(type='text', name='email', value='', placeholder='Your Email')
-        br
-        input.form-control.input-lg(type='password', name='password', value='', placeholder='Password')
-        .row
-          .col-xs-4.col-md-4
-            label Account typed
-            select.form-control.input-lg(name='type')
-              option(value='true') Shift manager
-              option(value='false') Worker
-        br
-        span.help-block
-          | Creating account you will add a new worker to in your database. 
-        button.btn.btn-lg.btn-primary.btn-block.signup-btn(type='submit')
-          | Create new worker  account
+        form.form(action='/addWorker', method='post', accept-charset='utf-8', role='form')
+          legend Creat a new worker account here
+          input.form-control.input-lg(type='text', name='names', value='', placeholder='Name')
+          br
+          input.form-control.input-lg(type='text', name='email', value='', placeholder='Your Email')
+          br
+          input.form-control.input-lg(type='password', name='password', value='', placeholder='Password')
+          .row
+            .col-xs-4.col-md-4
+              label Account typed
+              select.form-control.input-lg(name='type')
+                option(value='true') Shift manager
+                option(value='false') Worker
+          br
+          span.help-block
+            | Creating account you will add a new worker to in your database. 
+          button.btn.btn-lg.btn-primary.btn-block.signup-btn(type='submit')
+            | Create new worker  account
 
