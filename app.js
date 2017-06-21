@@ -56,13 +56,25 @@ db.sync({force: true});
 									/* roster */
 app.get('/roster', (req,res) =>{
 
+	let firstDay = "2017-6-12"
+	let lastDay = "2017-6-18"
+
 	User.findAll({
-		include: [{model: Time,
+		include: [
+			{ model: Time, 
+				 where: {
+		            date: {
+		                $gte: firstDay 
+		            },
+		            date: {
+		                $lte: lastDay
+		            }
+	        	},
 			include: [{model: Task}]
 		}]
 	})
 	.then((users) =>{
-		console.log(users[0].times[0])
+		console.log(users)
 		res.render('roster', {users: users})
 	})
 })
@@ -189,9 +201,7 @@ app.post('/addWorker', function(request, response) {
 
 
 
-
-
-										/* the server */
+								/* the server */
 const listener = app.listen(3000, function () {
 	console.log('Example app listening on port: ' + listener.address().port);
 });
