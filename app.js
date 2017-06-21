@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
-// const db = new Sequelize(`postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`);
+
 const db = new Sequelize(`postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`);
 
 const session = require('express-session');
