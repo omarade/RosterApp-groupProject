@@ -34,12 +34,6 @@ html(lang='en')
 								span.glyphicon.glyphicon-time(aria-hidden='true')
 							input#registration-time.form-control(name='from', type='time')
 							span.input-group-btn
-								button.btn.btn-default(type='button', onclick='addNow()')
-									span.glyphicon.glyphicon-map-marker(aria-hidden='true')
-									|  Now
-								button.btn.btn-default(type='button', onclick='stopNow()')
-									span.glyphicon.glyphicon-minus-sign(aria-hidden='true')
-									|  Stop
 						br
 						label.control-label.col-sm-3(for='registration_time1') To:
 						.input-group.registration-date-time
@@ -47,17 +41,13 @@ html(lang='en')
 								span.glyphicon.glyphicon-time(aria-hidden='true')
 							input#registration-time1.form-control(name='to', type='time')
 							span.input-group-btn
-								button.btn.btn-default(type='button', onclick='addNow1()')
-									span.glyphicon.glyphicon-map-marker(aria-hidden='true')
-									|  Now
-								button.btn.btn-default(type='button', onclick='stopNow1()')
-									span.glyphicon.glyphicon-minus-sign(aria-hidden='true')
-									|  Stop							
-						button.btn.btn-default(type='submit') Submit
+						hr
+						button.btn.btn-default(type='submit', name="next", value=0) Submit 
+						
+						button#addTimeBlock.btn.btn-default(type='submit', name='next', value=1) Add another time block
 
 
 		script(src='/js/jquery.min.js')
 		script(src='/js/bootstrap.min.js')
-		script(src='/js/time.js')
 		script(src="http://momentjs.com/downloads/moment-with-locales.js")
 		script(src="http://momentjs.com/downloads/moment-timezone-with-data.js")

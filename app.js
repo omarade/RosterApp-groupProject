@@ -109,6 +109,8 @@ app.post('/time', (req, res) => {
 	var from = req.body.from
 	var to = req.body.to
 	var taskId = req.query.id
+	var next = req.body.next // 0 false 1 true
+	console.log(req.body)
 	console.log('taskId '+ taskId)
 	console.log('reached')
 	Time.create({
@@ -118,7 +120,15 @@ app.post('/time', (req, res) => {
 		taskId: taskId
 	})
 	.then( ()=>{
-		res.send('Done')
+		console.log("next: " + next)
+		if(next === "0" ) {
+			console.log("redirect task")
+			res.redirect("/task")
+		}
+		else if (next === "1") {
+			console.log("redirect time")
+			res.redirect("/time?id=" + taskId)		
+		}
 	})
 
 })
