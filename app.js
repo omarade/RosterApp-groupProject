@@ -1,3 +1,4 @@
+							/* requiring node libraries */
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -29,61 +30,145 @@ const User = db.define('user', {
 	email: {type: Sequelize.STRING, allowNull: false, uniqe: true},
 	password: {type: Sequelize.STRING, allowNull: false},
 	isAdmin: {type: Sequelize.BOOLEAN, allowNull: false}
-})
+});
 
 // Create model task
 const Task = db.define('task', {
 	name: {type: Sequelize.STRING, allowNull: false}
-})
+});
 
 // Create model time
 const Time = db.define('time', {
 	date: {type:Sequelize.DATEONLY, allowNull: false},
 	from: {type: Sequelize.TIME, allowNull: false},
 	to: {type: Sequelize.TIME, allowNull: false}
-})
+});
 
 // Define the relationships
-User.belongsToMany(Time, {through: 'time_user'})
-Time.belongsToMany(User, {through: 'time_user'})
+User.belongsToMany(Time, {through: 'time_user'});
+Time.belongsToMany(User, {through: 'time_user'});
 
-Task.hasMany(Time)
-Time.belongsTo(Task)
+Task.hasMany(Time);
+Time.belongsTo(Task);
 
 db.sync({force: true});
 
 
 									/* roster */
+// A function that gets all the date between 
+// the two dates that are given by the user
+var getDates = function(startDate, endDate) {
+	var dates = [],
+   	currentDate = startDate,
+    	addDays = function(days) {
+	    	var date = new Date(this.valueOf());
+	    	date.setDate(date.getDate() + days);
+    	return date;
+    };
+	while (currentDate <= endDate) {
+	  	dates.push(currentDate);
+	  	currentDate = addDays.call(currentDate, 1);
+	}
+	return dates;
+};
+
+// renders the page roster
 app.get('/roster', (req,res) =>{
+	var user = req.session.user;
+	if(user === undefined){
+		res.render('logIn',{message: "Please log in to view your profile"});
+	}
+	else{
+		let today = '2017-6-25'
+		let lastDay = '2017-6-28'
+		/*let today = new Date();
+		today = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+		let lastDay = new Date();
+		lastDay = lastDay.getFullYear()+'-'+(lastDay.getMonth()+1)+'-'+(lastDay.getDate()+7);*/
 
-	let firstDay = "2017-6-12"
-	let lastDay = "2017-6-18"
+		User.findAll({
+			include: [
+				{ model: Time, 
+					where: {
+			            date: {
+			                $gte: today,
+			                $lte: lastDay
+			            },
+		        	}, 
+		        	order: '"date" ASC',
+				include: [{model: Task}]
+			}]
+		})
+		.then((users) =>{
+			var dates = getDates(new Date(today), new Date(lastDay));                                                                                                           
+				dates.forEach(function(date) {
+				 console.log('!!!'+date);
+			});
+			res.render('roster', {users: users, days: dates});
+		})
+		.catch((err) =>{
+			throw err;
+		});
+	}
+});
 
+app.post('/roster', (req,res) =>{
+	let firstDay = req.body.firstDay
+	let lastDay = req.body.lastDay
 	User.findAll({
 		include: [
 			{ model: Time, 
-				 where: {
+				where: {
 		            date: {
-		                $gte: firstDay 
-		            },
-		            date: {
+		                $gte: firstDay,
 		                $lte: lastDay
 		            }
-	        	},
+	        	}, 
+	        	order: '"date" ASC',
 			include: [{model: Task}]
 		}]
 	})
 	.then((users) =>{
-		console.log(users)
-		res.render('roster', {users: users})
+		var dates = getDates(new Date(firstDay), new Date(lastDay));                                                                                                           
+			dates.forEach(function(date) {
+			 console.log(date);
+		});
+		res.render('roster', {users: users, days: dates});
 	})
-})
+	.catch((err) =>{
+		throw err;
+	});
+});
+
+							/* Validation */
+
+app.post('/validation', function(req,res){ // deal with an ajax request and send a response
+	User.findOne({ //look if a user already has an account
+		where: {
+			email: req.body.typedIn
+		}
+	})
+	.then((user) =>{
+		var message = '';
+		if(user){ // if so send this message
+			message = 'This email already exists';
+			res.send(message);
+		}
+		else{ // otherwise do this
+			message = '';
+			res.send(message);
+		}
+	})
+	.catch((err) =>{
+		throw err;
+	});	
+});
 
 
 								/* task */
 app.get('/task', (req,res) =>{
 	res.render('task')
-})
+});
 
 app.post('/task', (req, res) =>{
 	const taskName = req.body.task
@@ -92,27 +177,31 @@ app.post('/task', (req, res) =>{
 	})
 	.then((task) => {
 		console.log(`Task id: ${task.id}`)
-		res.redirect('/time?id=' + task.id)
+		res.redirect('/time?id=' + task.id);
 	})
-})
+	.catch((err) =>{
+		throw err;
+	});
+});
 
 									/* time */
 app.get("/time", (req, res) => {
-	var task = req.query.id
-	console.log("Task id from time get: " + task)
+	var taskId = req.query.id
+	console.log("Task id from time get: " + taskId);
 
-	res.render("time"/*, {task: task}*/)
-})
+	res.render("time", {taskId: taskId});
+});
 
 app.post('/time', (req, res) => {
 	var date = req.body.date
-	var from = req.body.from
-	var to = req.body.to
-	var taskId = req.query.id
-	var next = req.body.next // 0 false 1 true
-	console.log(req.body)
-	console.log('taskId '+ taskId)
-	console.log('reached')
+	var from = req.body.from;
+	var to = req.body.to;
+	var taskId = req.body.taskId;
+	var next = req.body.next; // 0 false 1 true
+	console.log(req.body);
+	console.log("Query" + req.query);
+	console.log('taskIiiiiid '+ taskId);
+	console.log('reached');
 	Time.create({
 		date: date,
 		from: from,
@@ -120,19 +209,20 @@ app.post('/time', (req, res) => {
 		taskId: taskId
 	})
 	.then( ()=>{
-		console.log("next: " + next)
+		console.log("next: " + next);
 		if(next === "0" ) {
-			console.log("redirect task")
-			res.redirect("/task")
+			console.log("redirect task");
+			res.redirect("/task");
 		}
 		else if (next === "1") {
-			console.log("redirect time")
-			res.redirect("/time?id=" + taskId)		
+			console.log("redirect time");
+			res.redirect("/time?id=" + taskId);		
 		}
 	})
-
-})
-
+	.catch((err) =>{
+		throw err;
+	});
+});
 
 
 // login route
@@ -150,34 +240,37 @@ app.post('/login', function(request, response) {
 	console.log(email);
 	console.log(password);
 
-
-		User.findOne({
-			where: {
-				email: email
-				}
-		})
-		.then( (user) => {
-
+	User.findOne({
+		where: {
+			email: email
+		}
+	})
+	.then( (user) => {
+		if(user){
 			console.log(user)
-		 
-			 	var hash =  user.password
+		 	var hash =  user.password
+			bcrypt.compare(password, hash, function(err, result) {
+				if(result === true){
+					request.session.user = user
+				 	response.redirect('/roster')
+				}
 
-				  bcrypt.compare(password, hash, function(err, result) {
-
-					 		if(result === true){
-
-					 			// req.session.user = user;
-
-					 			response.render('addWorker'); 
-					 		}
-
-					});
-				
-		});
+				else{
+					response.render('logIn', {message:'Invalid email or password'});
+				}
+			});
+		}
+		else{
+			response.render('logIn', {message: "You don't have an account!!"});
+		}
+	})
+	.catch((err) =>{
+		throw err;
+	});
 });
 
 
-// add worker routs
+// add worker route
 app.get('/addWorker', function(request, response) {
 
   response.render ("addWorker")
@@ -198,20 +291,32 @@ app.post('/addWorker', function(request, response) {
 	bcrypt.hash(password, 10, function(err, hash) {
 
 		User.create({
-		name: name ,
-		email: email,
-		password: hash,
-		isAdmin: type
+			name: name ,
+			email: email,
+			password: hash,
+			isAdmin: type
 		})
-	.then( () => {
-		response.render ('logIn') 
+		.then( () => {
+			response.render ('logIn')
 		})
+		.catch((err) =>{
+			throw err;
+		});
 	})
 });
 
+								/* Logout */
+app.get('/logout', (req,res) =>{
+	req.session.destroy((err) =>{ // destroy the session
+		if(err){
+			throw err
+		}
+		res.render('logIn',{message: 'Successfully logged out.'})
+	})
+})
 
 
 								/* the server */
-const listener = app.listen(3000, function () {
+const listener = app.listen(8080, function () {
 	console.log('Example app listening on port: ' + listener.address().port);
-});
+})
