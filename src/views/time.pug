@@ -4,20 +4,50 @@ html(lang='en')
 		link(href='css/bootstrap.min.css' type='text/css' rel='stylesheet')
 		link(href='css/bootstrap-theme.min.css' type='text/css' rel='stylesheet')
 	body
-
-		//- the Form that adds to the roster table goes here
-		.container
+		nav.navbar.navbar-inverse
+			.container-fluid
+				.navbar-header
+					a.navbar-brand(href='adminhome') Time to Work
+				ul.nav.navbar-nav
+					li.active
+						a(href='adminhome') roaster
+					li
+						a(href='http://localhost:3000/task') Add new rooster
+					li
+						a(href='http://localhost:3000/addworker') Add new worker
+				button.btn.btn-danger.navbar-btn.pull-right
+					a(href='http://localhost:3000/login') logout		
+		.container(style='margin-top:70px;')
 			.row
-				.col-lg-8
-					form(action='/time/' + task, method='post')
-						.col-lg-4
-							label From
-							textarea.form-control#new_comment(rows='1', placeholder='Comment' , name='from')
-							label To
-							textarea.form-control#new_comment(rows='1', placeholder='Comment' , name='to')
-							br
-							button.btn.btn-default(type='submit') Submit
+				form.form-group.col-sm-7.col-sm-offset-2(action='/time?id=' + task, method='post')
+					.registration-date
+						label.control-label.col-sm-3(for='date') Date:
+						.input-group.registration-date-time
+							span#basic-addon1.input-group-addon
+								span.glyphicon.glyphicon-calendar(aria-hidden='true')
+							input#registration-date.form-control(name='date', type='date')
+								
+						br
+						label.control-label.col-sm-3(for='registration_time') From:
+						.input-group.registration-date-time
+							span#basic-addon1.input-group-addon
+								span.glyphicon.glyphicon-time(aria-hidden='true')
+							input#registration-time.form-control(name='from', type='time')
+							span.input-group-btn
+						br
+						label.control-label.col-sm-3(for='registration_time1') To:
+						.input-group.registration-date-time
+							span#basic-addon1.input-group-addon
+								span.glyphicon.glyphicon-time(aria-hidden='true')
+							input#registration-time1.form-control(name='to', type='time')
+							span.input-group-btn
+						hr
+						button.btn.btn-default(type='submit', name="next", value=0) Submit 
+						
+						button#addTimeBlock.btn.btn-default(type='submit', name='next', value=1) Add another time block
 
 
 		script(src='/js/jquery.min.js')
 		script(src='/js/bootstrap.min.js')
+		script(src="http://momentjs.com/downloads/moment-with-locales.js")
+		script(src="http://momentjs.com/downloads/moment-timezone-with-data.js")

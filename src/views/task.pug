@@ -4,7 +4,19 @@ html(lang='en')
 		link(href='css/bootstrap.min.css' type='text/css' rel='stylesheet')
 		link(href='css/bootstrap-theme.min.css' type='text/css' rel='stylesheet')
 	body
-
+		nav.navbar.navbar-inverse
+			.container-fluid
+				.navbar-header
+					a.navbar-brand(href='adminhome') Time to Work
+				ul.nav.navbar-nav
+					li.active
+						a(href='adminhome') roaster
+					li
+						a(href='http://localhost:3000/task') Add new rooster
+					li
+						a(href='http://localhost:3000/addworker') Add new worker
+				button.btn.btn-danger.navbar-btn.pull-right
+					a(href='http://localhost:3000/login') logout
 		//- the Form that adds to the roster table goes here
 		.container
 			.row
@@ -15,7 +27,6 @@ html(lang='en')
 							textarea.form-control#new_comment(rows='1', placeholder='Comment' , name='task')
 							br
 							button.btn.btn-default(type='submit') Submit
-
 
 		script(src='/js/jquery.min.js')
 		script(src='/js/bootstrap.min.js')
