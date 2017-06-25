@@ -35,7 +35,7 @@ const Task = db.define('task', {
 	name: {type: Sequelize.STRING, allowNull: false}
 })
 
-
+// Create model time
 const Time = db.define('time', {
 	date: {type:Sequelize.DATEONLY, allowNull: false},
 	from: {type: Sequelize.TIME, allowNull: false},
@@ -48,11 +48,7 @@ Time.belongsToMany(User, {through: 'time_user'})
 Task.hasMany(Time)
 Time.belongsTo(Task)
 
-
-
-
-
-db.sync({force: true});
+db.sync({force: false});
 
 app.get('/task', (req,res) =>{
 	res.render('task')
@@ -64,45 +60,57 @@ app.post('/task', (req, res) =>{
 		name: taskName
 	})
 	.then((task) => {
-		console.log(`Task id: ${task.id}`)
+		// console.log(`Task id: ${task.id}`)
 		res.redirect('/time?id=' + task.id)
 	})
 })
 
 app.get("/time", (req, res) => {
 	var task = req.query.id
-	console.log("Task id from time get: " + task)
-
-	res.render("time", {task: task})
+	console.log('task ' + task)
+	// console.log("Task id from time get: " + task)
+	User.findAll()
+	.then((users)=> {
+		// console.log(users)
+		res.render("time", {task: task, users: users})
+	})
 })
 
 app.post('/time', (req, res) => {
-	var date = req.body.date
-	var from = req.body.from
-	var to = req.body.to
-	var taskId = req.query.id
-	var next = req.body.next // 0 false 1 true
-	console.log(req.body)
-	console.log('taskId '+ taskId)
-	console.log('reached')
+	const formData = JSON.parse(decodeURIComponent(req.body.formData))
+	var date = formData.date
+	var from = formData.from
+	var to = formData.to
+	var taskId = req.body.taskId	
+	var btnVal = req.body.btnVal
+	
 	Time.create({
 		date: date,
 		from: from,
 		to: to,
 		taskId: taskId
 	})
-	.then( ()=>{
-		console.log("next: " + next)
-		if(next === "0" ) {
-			console.log("redirect task")
-			res.redirect("/task")
-		}
-		else if (next === "1") {
-			console.log("redirect time")
-			res.redirect("/time?id=" + taskId)		
-		}
+	.then( (time)=>{
+		User.findAll({
+			where: {
+				id: formData.user
+			}
+		})
+		.then(user => {
+			time.setUsers(user) //checkUsers
+			console.log("btnVal: " + btnVal)
+			res.send({url0: "/task", url1: "/time?id=" + taskId})
+			
+			/*if(btnVal === 0) {
+				console.log("redirect task")
+				res.redirect("/task")
+			}
+			else if (btnVal === 1) {
+				console.log("redirect time")
+				res.redirect("/time?id=" + taskId)		
+			}*/	
+		})			
 	})
-
 })
 
 
