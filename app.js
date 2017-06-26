@@ -53,7 +53,7 @@ db.sync({force: false});
 app.get('/task', (req,res) =>{
 	const user = req.session.user;
 	if (user === undefined) {
-		res.render('logIn', {message: "Please log in to view your profile."})
+		res.render('logIn', {message: "Please log in"})
 	}
 	else if(user && (user.isAdmin === false)){
 		res.redirect('/roster')
@@ -69,20 +69,25 @@ app.post('/task', (req, res) =>{
 		name: taskName
 	})
 	.then((task) => {
-		// console.log(`Task id: ${task.id}`)
 		res.redirect('/time?id=' + task.id)
 	})
 })
 
 app.get("/time", (req, res) => {
-	var task = req.query.id
-	console.log('task ' + task)
-	// console.log("Task id from time get: " + task)
-	User.findAll()
-	.then((users)=> {
-		// console.log(users)
-		res.render("time", {task: task, users: users})
-	})
+	const user = req.session.user;
+	if (user === undefined) {
+		res.render('logIn', {message: "Please log in"})
+	}
+	else if(user && (user.isAdmin === false)){
+		res.redirect('/roster')
+	}
+	else{
+		let task = req.query.id
+		User.findAll()
+		.then((users)=> {
+			res.render("time", {task: task, users: users})			
+		})
+	}	
 })
 
 app.post('/time', (req, res) => {
@@ -110,7 +115,7 @@ app.post('/time', (req, res) => {
 			console.log("btnVal: " + btnVal)
 			res.send({url0: "/task", url1: "/time?id=" + taskId})
 			
-/*			if(btnVal === '0') {
+			/*if(btnVal === '0') {
 				console.log("redirect task")
 				res.redirect("/task")
 			}
@@ -122,70 +127,56 @@ app.post('/time', (req, res) => {
 	})
 })
 
-
-
 // login route
-
 app.get('/login', function(request, response) {
 
   response.render ("logIn")
 });
 
 app.post('/login', function(request, response) {
-
 	let email = request.body.email
 	let password = request.body.password
 
-	console.log(email);
-	console.log(password);
-
-
-		User.findOne({
-			where: {
-				email: email
-				}
-		})
-		.then( (user) => {
-
-			console.log(user)
-		 
-			 	var hash =  user.password
-
-				  bcrypt.compare(password, hash, function(err, result) {
-
-					 		if(result === true){
-
-					 			// req.session.user = user;
-
-					 			response.render('addWorker'); 
-					 		}
-
-					});
-				
-		});
+	User.findOne({
+		where: {
+			email: email
+			}
+	})
+	.then( (user) => {
+		console.log(user)		 
+	 	var hash =  user.password
+		bcrypt.compare(password, hash, function(err, result) {
+	 		if(result === true){
+	 			request.session.user = user;
+	 			response.redirect('/roster'); 
+	 		}
+		});				
+	});
 });
 
 
 // add worker routs
 app.get('/addWorker', function(request, response) {
-
-  response.render ("addWorker")
+	const user = request.session.user;
+	if (user === undefined) {
+		response.render('logIn', {message: "Please log in"})
+	}
+	else if(user && (user.isAdmin === false)){
+		response.redirect('/roster')
+	}
+	else{
+		response.render ("addWorker")	
+	} 
 });
 
 
 app.post('/addWorker', function(request, response) {
-
 	let name = request.body.names
 	let email = request.body.email
 	let password = request.body.password
 	let type = request.body.type
-	console.log(name);
-	console.log(email);
-	console.log(password);
-	console.log(type);
 
 	bcrypt.hash(password, 10, function(err, hash) {
-
 		User.create({
 		name: name ,
 		email: email,
@@ -198,11 +189,7 @@ app.post('/addWorker', function(request, response) {
 	})
 });
 
-
-
-
-
-
+												/* The server */
 const listener = app.listen(3000, function () {
 	console.log('Example app listening on port: ' + listener.address().port);
 });
