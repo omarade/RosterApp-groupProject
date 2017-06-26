@@ -51,7 +51,16 @@ Time.belongsTo(Task)
 db.sync({force: false});
 
 app.get('/task', (req,res) =>{
-	res.render('task')
+	const user = req.session.user;
+	if (user === undefined) {
+		res.render('logIn', {message: "Please log in to view your profile."})
+	}
+	else if(user && (user.isAdmin === false)){
+		res.redirect('/roster')
+	}
+	else{
+		res.render('task')
+	}	
 })
 
 app.post('/task', (req, res) =>{
@@ -101,11 +110,11 @@ app.post('/time', (req, res) => {
 			console.log("btnVal: " + btnVal)
 			res.send({url0: "/task", url1: "/time?id=" + taskId})
 			
-			/*if(btnVal === 0) {
+/*			if(btnVal === '0') {
 				console.log("redirect task")
 				res.redirect("/task")
 			}
-			else if (btnVal === 1) {
+			else if (btnVal === '1') {
 				console.log("redirect time")
 				res.redirect("/time?id=" + taskId)		
 			}*/	

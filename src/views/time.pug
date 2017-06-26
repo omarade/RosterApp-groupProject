@@ -46,9 +46,9 @@ html(lang='en')
 						each user in users
 							<input type="checkbox" name="user" value=#{user.id}> #{user.name}<br>
 						hr
-						button.sub.btn.btn-default#subBtn(type='submit', name="next", value=0) Submit 
+						button.sub.btn.btn-default#subBtn(type='submit', name="next", value='0') Submit 
 						
-						button#addTimeBlock.sub.btn.btn-default(type='submit', name='next', value=1) Submit & Add another time-block
+						button#addTimeBlock.sub.btn.btn-default(type='submit', name='next', value='1') Submit & Add another time-block
 		//- br
 		//- .container
 		//- 	.row
