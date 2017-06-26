@@ -41,6 +41,7 @@ html(lang='en')
 							span#basic-addon1.input-group-addon
 								span.glyphicon.glyphicon-time(aria-hidden='true')
 							input#registration-time1.form-control(name='to', type='time')
+							input(type="hidden" value=taskId name="taskId")
 							span.input-group-btn
 						hr
 						each user in users
