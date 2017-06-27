@@ -237,14 +237,6 @@ app.post('/time', (req, res) => {
 			time.setUsers(user) //checkUsers
 			console.log("btnVal: " + btnVal)
 			res.send({url0: "/task", url1: "/time?id=" + taskId})
-			/*if(btnVal === '0') {
-				console.log("redirect task")
-				res.redirect("/task")
-			}
-			else if (btnVal === '1') {
-				console.log("redirect time")
-				res.redirect("/time?id=" + taskId)		
-			}*/	
 		})
 	})
 	.catch((err) =>{
