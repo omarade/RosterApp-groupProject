@@ -159,12 +159,12 @@ app.post('/validation', function(req,res){ // deal with an ajax request and send
 });
 
 
-								/* task */
+								/* TASK, Check if user loged in and is an Admin before rendering */
 app.get('/task', (req,res) =>{
 
 	const user = req.session.user;
 	if (user === undefined) {
-		res.render('logIn', {message: "Please log in to view your profile."})
+		res.render('logIn', {message: "Please log in"})
 	}
 	else if(user && (user.isAdmin === false)){
 		res.redirect('/roster')
@@ -174,14 +174,13 @@ app.get('/task', (req,res) =>{
 	}	
 })
 
-
+								/*Add a task to the database*/
 app.post('/task', (req, res) =>{
 	const taskName = req.body.task
 	Task.create({
 		name: taskName
 	})
 	.then((task) => {
-		// console.log(`Task id: ${task.id}`)
 		res.redirect('/time?id=' + task.id)
 	})
 	.catch((err) =>{
@@ -189,21 +188,31 @@ app.post('/task', (req, res) =>{
 	});
 });
 
-									/* time */
+								/* TIME, Check if user loged in and is an Admin before rendering */
 app.get("/time", (req, res) => {
-	var taskId = req.query.id
-	console.log("Task id from time get: " + taskId);
+	const user = req.session.user;
+	if (user === undefined) {
+		res.render('logIn', {message: "Please log in"})
+	}
+	else if(user && (user.isAdmin === false)){
+		res.redirect('/roster')
+	}
+	else{
+		let task = req.query.id
+		User.findAll()
+		.then((users)=> {
+			res.render("time", {task: task, users: users})			
+		})
+	}	
+})
 
-	res.render("time", {taskId: taskId});
-});
-
+								/*link time and users to a task and add to database*/
 app.post('/time', (req, res) => {
 	const formData = JSON.parse(decodeURIComponent(req.body.formData))
 	var date = formData.date
 	var from = formData.from
 	var to = formData.to
 	var taskId = req.body.taskId	
-	var btnVal = req.body.btnVal
 	
 	Time.create({
 		date: date,
@@ -219,36 +228,23 @@ app.post('/time', (req, res) => {
 		})
 		.then(user => {
 			time.setUsers(user) //checkUsers
-			console.log("btnVal: " + btnVal)
 			res.send({url0: "/task", url1: "/time?id=" + taskId})
-			/*if(btnVal === '0') {
-				console.log("redirect task")
-				res.redirect("/task")
-			}
-			else if (btnVal === '1') {
-				console.log("redirect time")
-				res.redirect("/time?id=" + taskId)		
-			}*/	
+		})
 	})
 	.catch((err) =>{
 		throw err;
 	});
 });
 
+
 // login route
-
 app.get('/login', function(request, response) {
-
   response.render ("logIn")
 });
 
 app.post('/login', function(request, response) {
-
 	let email = request.body.email
 	let password = request.body.password
-
-	console.log(email);
-	console.log(password);
 
 	User.findOne({
 		where: {
@@ -257,14 +253,12 @@ app.post('/login', function(request, response) {
 	})
 	.then( (user) => {
 		if(user){
-			console.log(user)
 		 	var hash =  user.password
 			bcrypt.compare(password, hash, function(err, result) {
 				if(result === true){
 					request.session.user = user
 				 	response.redirect('/roster')
 				}
-
 				else{
 					response.render('logIn', {message:'Invalid email or password'});
 				}
@@ -282,24 +276,26 @@ app.post('/login', function(request, response) {
 
 // add worker route
 app.get('/addWorker', function(request, response) {
-
-  response.render ("addWorker")
+	const user = request.session.user;
+	if (user === undefined) {
+		response.render('logIn', {message: "Please log in"})
+	}
+	else if(user && (user.isAdmin === false)){
+		response.redirect('/roster')
+	}
+	else{
+		response.render ("addWorker")	
+	} 
 });
 
 
 app.post('/addWorker', function(request, response) {
-
 	let name = request.body.names
 	let email = request.body.email
 	let password = request.body.password
 	let type = request.body.type
-	console.log(name);
-	console.log(email);
-	console.log(password);
-	console.log(type);
 
 	bcrypt.hash(password, 10, function(err, hash) {
-
 		User.create({
 			name: name ,
 			email: email,
@@ -325,8 +321,7 @@ app.get('/logout', (req,res) =>{
 	})
 })
 
-
 								/* the server */
-const listener = app.listen(8080, function () {
+const listener = app.listen(3000, function () {
 	console.log('Example app listening on port: ' + listener.address().port);
 })
