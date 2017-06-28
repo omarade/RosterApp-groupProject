@@ -166,7 +166,7 @@ app.post('/validation', function(req,res){ // deal with an ajax request and send
 });
 
 
-								/* task */
+								/* TASK, Check if user loged in and is an Admin before rendering */
 app.get('/task', (req,res) =>{
 
 	const user = req.session.user;
@@ -181,7 +181,7 @@ app.get('/task', (req,res) =>{
 	}	
 })
 
-
+								/*Add a task to the database*/
 app.post('/task', (req, res) =>{
 	const taskName = req.body.task
 	Task.create({
@@ -195,7 +195,7 @@ app.post('/task', (req, res) =>{
 	});
 });
 
-									/* time */
+								/* TIME, Check if user loged in and is an Admin before rendering */
 app.get("/time", (req, res) => {
 	const user = req.session.user;
 	if (user === undefined) {
@@ -213,13 +213,13 @@ app.get("/time", (req, res) => {
 	}	
 })
 
+								/*link time and users to a task and add to database*/
 app.post('/time', (req, res) => {
 	const formData = JSON.parse(decodeURIComponent(req.body.formData))
 	var date = formData.date
 	var from = formData.from
 	var to = formData.to
 	var taskId = req.body.taskId	
-	var btnVal = req.body.btnVal
 	
 	Time.create({
 		date: date,
@@ -235,7 +235,6 @@ app.post('/time', (req, res) => {
 		})
 		.then(user => {
 			time.setUsers(user) //checkUsers
-			console.log("btnVal: " + btnVal)
 			res.send({url0: "/task", url1: "/time?id=" + taskId})
 		})
 	})

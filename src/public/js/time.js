@@ -19,21 +19,15 @@ var formValueParser = function (someString) {
 	        finalRes[keyValArr[0]] = keyValArr[1]
 	    }
 	}
-	console.log(finalRes)
 	return finalRes
 }
 
 $('.sub').click(function(event){
 	event.preventDefault()
-	console.log('event.target')
-	console.log(event.target.value)
-	console.log(window.location.href.split("=")[1])
 	var taskId = window.location.href.split("=")[1]
 	var btnVal = event.target.value
 	var formData = $("form").serialize()
-	$.post('/time', {formData: JSON.stringify(formValueParser(formData)), btnVal: btnVal, taskId: taskId}, function(data){
-		console.log(formData)
-		console.log(data.url0)
+	$.post('/time', {formData: JSON.stringify(formValueParser(formData)), taskId: taskId}, function(data){
 		if (btnVal === '0'){
 			console.log(data.url0)
 			window.location.replace(data.url0)
