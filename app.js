@@ -33,6 +33,7 @@ const Task = db.define('task', {
 	name: {type: Sequelize.STRING, allowNull: false}
 });
 
+
 // Create model time
 const Time = db.define('time', {
 	date: {type:Sequelize.DATEONLY, allowNull: false},
@@ -160,8 +161,19 @@ app.post('/validation', function(req,res){ // deal with an ajax request and send
 
 								/* task */
 app.get('/task', (req,res) =>{
-	res.render('task')
-});
+
+	const user = req.session.user;
+	if (user === undefined) {
+		res.render('logIn', {message: "Please log in to view your profile."})
+	}
+	else if(user && (user.isAdmin === false)){
+		res.redirect('/roster')
+	}
+	else{
+		res.render('task')
+	}	
+})
+
 
 app.post('/task', (req, res) =>{
 	const taskName = req.body.task
@@ -169,8 +181,8 @@ app.post('/task', (req, res) =>{
 		name: taskName
 	})
 	.then((task) => {
-		console.log(`Task id: ${task.id}`)
-		res.redirect('/time?id=' + task.id);
+		// console.log(`Task id: ${task.id}`)
+		res.redirect('/time?id=' + task.id)
 	})
 	.catch((err) =>{
 		throw err;
@@ -186,37 +198,42 @@ app.get("/time", (req, res) => {
 });
 
 app.post('/time', (req, res) => {
-	var date = req.body.date
-	var from = req.body.from;
-	var to = req.body.to;
-	var taskId = req.body.taskId;
-	var next = req.body.next; // 0 false 1 true
-	console.log(req.body);
-	console.log("Query" + req.query);
-	console.log('taskIiiiiid '+ taskId);
-	console.log('reached');
+	const formData = JSON.parse(decodeURIComponent(req.body.formData))
+	var date = formData.date
+	var from = formData.from
+	var to = formData.to
+	var taskId = req.body.taskId	
+	var btnVal = req.body.btnVal
+	
 	Time.create({
 		date: date,
 		from: from,
 		to: to,
 		taskId: taskId
 	})
-	.then( ()=>{
-		console.log("next: " + next);
-		if(next === "0" ) {
-			console.log("redirect task");
-			res.redirect("/task");
-		}
-		else if (next === "1") {
-			console.log("redirect time");
-			res.redirect("/time?id=" + taskId);		
-		}
+	.then( (time)=>{
+		User.findAll({
+			where: {
+				id: formData.user
+			}
+		})
+		.then(user => {
+			time.setUsers(user) //checkUsers
+			console.log("btnVal: " + btnVal)
+			res.send({url0: "/task", url1: "/time?id=" + taskId})
+			/*if(btnVal === '0') {
+				console.log("redirect task")
+				res.redirect("/task")
+			}
+			else if (btnVal === '1') {
+				console.log("redirect time")
+				res.redirect("/time?id=" + taskId)		
+			}*/	
 	})
 	.catch((err) =>{
 		throw err;
 	});
 });
-
 
 // login route
 
