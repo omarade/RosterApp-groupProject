@@ -5,11 +5,8 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const Sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
-
 const db = new Sequelize(`postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost/postgres`);
-
 const session = require('express-session');
-
 
 app.set('views', __dirname + '/src/views');
 app.set('view engine', 'pug');
@@ -22,7 +19,6 @@ app.use(session({
 	resave: true,
 	saveUninitialized: false
 }));
-
 
 // Create model user
 const User = db.define('user', {
@@ -53,10 +49,33 @@ Time.belongsTo(Task);
 
 db.sync({force: true});
 
+Task.create({
+	name:'Do something'
+})
+.then((task)=>{
+	Time.create({
+		date: '2017-06-26',
+	    from:  '23:38:47',
+	    to:  '23:40:00',
+	    taskId: task.id
+	})
+	.then(time => {
+	    User.create({
+	        name: 'Omar',
+	        email: 'omar@live.com',
+	        password:'123',
+	        isAdmin: true
+	    })    
+	    .then(user => {
+	        user.setTimes([time]) // To connect the table of time and user
+	    })
+	})
+})
+
 
 									/* roster */
 // A function that gets all the date between 
-// the two dates that are given by the user
+// two dates
 var getDates = function(startDate, endDate) {
 	var dates = [],
    	currentDate = startDate,
@@ -79,12 +98,10 @@ app.get('/roster', (req,res) =>{
 		res.render('logIn',{message: "Please log in to view your profile"});
 	}
 	else{
-		let today = '2017-6-25'
-		let lastDay = '2017-6-28'
-		/*let today = new Date();
+		let today = new Date(); // the first date
 		today = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-		let lastDay = new Date();
-		lastDay = lastDay.getFullYear()+'-'+(lastDay.getMonth()+1)+'-'+(lastDay.getDate()+7);*/
+		let lastDay = new Date(); // the last date
+		lastDay = lastDay.getFullYear()+'-'+(lastDay.getMonth()+1)+'-'+(lastDay.getDate()+2);
 
 		User.findAll({
 			include: [
@@ -111,7 +128,7 @@ app.get('/roster', (req,res) =>{
 		});
 	}
 });
-
+// Gets the information from the client and deals with it
 app.post('/roster', (req,res) =>{
 	let firstDay = req.body.firstDay
 	let lastDay = req.body.lastDay
