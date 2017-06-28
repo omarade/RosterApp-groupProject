@@ -49,30 +49,6 @@ Time.belongsTo(Task);
 
 db.sync({force: true});
 
-Task.create({
-	name:'Do something'
-})
-.then((task)=>{
-	Time.create({
-		date: '2017-06-26',
-	    from:  '23:38:47',
-	    to:  '23:40:00',
-	    taskId: task.id
-	})
-	.then(time => {
-	    User.create({
-	        name: 'Omar',
-	        email: 'omar@live.com',
-	        password:'123',
-	        isAdmin: true
-	    })    
-	    .then(user => {
-	        user.setTimes([time]) // To connect the table of time and user
-	    })
-	})
-})
-
-
 									/* roster */
 // A function that gets all the date between 
 // two dates
