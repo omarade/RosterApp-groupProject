@@ -1,0 +1,32 @@
+doctype html
+html(lang='en')
+	head
+		link(href='css/bootstrap.min.css' type='text/css' rel='stylesheet')
+		link(href='css/bootstrap-theme.min.css' type='text/css' rel='stylesheet')
+	body
+		nav.navbar.navbar-inverse
+			.container-fluid
+				.navbar-header
+					a.navbar-brand(href='adminhome') Time to Work
+				ul.nav.navbar-nav
+					li.active
+						a(href='/roster') Roster
+					li
+						a(href='/task') Add new roster
+					li
+						a(href='/addWorker') Add new worker
+				button.btn.btn-danger.navbar-btn.pull-right
+					a(href='/logout') logout
+		//- the Form that adds to the roster table goes here
+		.container
+			.row
+				.col-lg-8
+					form(action='/task' method='post')
+						.col-lg-4
+							label Task
+							textarea.form-control#new_comment(rows='1', placeholder='Comment' , name='task')
+							br
+							button.btn.btn-default(type='submit') Submit
+
+		script(src='/js/jquery.min.js')
+		script(src='/js/bootstrap.min.js')

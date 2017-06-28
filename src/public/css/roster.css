@@ -1,0 +1,11 @@
+td, th {
+    text-align: center;
+}
+
+#form {
+	margin-bottom: 25px !important;
+}
+
+#my-btn {
+    margin-top: 24px;
+}

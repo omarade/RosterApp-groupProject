@@ -1,0 +1,56 @@
+html(lang='en')
+  head
+    title roster
+    link(rel='stylesheet', href='css/bootstrap.min.css')
+    link(rel='stylesheet', href='css/roster.css')
+  body
+    nav.navbar.navbar-inverse
+      .container-fluid
+        .navbar-header
+          a.navbar-brand(href='#') Time to Work
+        ul.nav.navbar-nav
+          li.active
+             a(href='/roster') roster
+          li
+            a(href='/task') Add new roster
+          li
+            a(href='/addWorker') Add new worker
+        button.btn.btn-danger.navbar-btn.pull-right
+          a(href='/logout') logout
+    .container
+      .row
+        br
+        .col-lg-12
+          form(action='/roster', method='post', role='form')
+            .col-lg-4.col-lg-push-1.form-group#form
+              label.control-label First day:
+              input.form-control(type='search', name='firstDay', placeholder='YYYY-MM-DD')
+            .col-lg-4.col-lg-push-1.form-group#form
+              label.control-label Last day:
+              input.form-control(type='search', name='lastDay', placeholder='YYYY-MM-DD')
+            .col-lg-1.col-lg-push-1
+              button.btn.btn-primary#my-btn(type='submit') Search
+      .row
+        .col-lg-12
+          table#roster-table.table.table-bordered
+            thead
+              tr.bg-primary
+                th(style='background-color: #D55B3E;') Employees
+                each day in days
+                  - day = day.toDateString()
+                  th(style='background-color: #D55B3E;') #{day}
+
+            tbody.context
+              each user in users
+                td.info #{user.name}
+                each day in days
+                  each time in user.times
+                    - day = day.getDate()+'-'+day.getMonth()+'-'+day.getFullYear()
+                    - time.dt = time.date.getDate()+'-'+time.date.getMonth()+'-'+time.date.getFullYear()
+                    if day === time.dt
+                      td(style='background-color: #00AAA0;') Task: #{time.task.name} <br> From: #{time.from} <br> To: #{time.to}
+                    else
+                      td(style='background-color: #FCF4D9')
+                tr                     
+    script(src='js/jquery.min.js')
+    script(src='js/bootstrap.min.js')
