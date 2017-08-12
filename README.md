@@ -9,9 +9,9 @@ The page is built with HTML, CSS and JavaScript for the front-end, plus Node.js 
 
 # Team:
 
-* Omar Abou Dehn
-* Rawan Abou Dehn
-* Samuel Ampofo
+Omar Abou Dehn  
+Rawan Abou Dehn  
+Samuel Ampofo
 
 # License:
 
