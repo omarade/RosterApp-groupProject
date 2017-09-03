@@ -8,27 +8,29 @@ html(lang='en')
     meta(name='viewport', content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0')
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
   body
-    #wrap.container
-    .row
-      .col-md-4.col-md-offset-4
-
-        form.register-form.form-group#register-form(action='/addWorker', method='post', accept-charset='utf-8', role='form')
-          legend(style='text-align: center;') Create a new worker account here
-          input.form-control.input-lg(type='text', name='names', value='', placeholder='Name')
-          br
-          input.form-control.input-lg#email1(type='email', name='email', value='', placeholder='Email')
-          b.validation(style='color:black ;margin-bottom: 20px;margin-left: 10 px;')
-          br
-          input.form-control.input-lg(type='password', name='password', value='', placeholder='Password')
-          .row
-            .col-xs-4.col-md-4
-              label Account type
-              select.form-control.input-lg(name='type', style='width: 170px')
-                option(value='true') Shift manager
-                option(value='false') Worker
-          hr
-          button.btn.btn-lg.btn-primary.btn-block.signup-btn(onclick = "remoteValidate(document.getElementById('email1').value)" )
-            | Create
+    #wrap.container 
+      .row
+        .col-md-4.col-md-offset-4
+          form.register-form.form-group#register-form(action='/addWorker', method='post', accept-charset='utf-8', role='form')
+            legend(style='text-align: center;') Create a new worker account here
+            input.form-control.input-lg(type='text', name='names', value='', placeholder='Name')
+            br
+            input.form-control.input-lg#email1(type='email', name='email', value='', placeholder='Email')
+            b.validation(style='color:black ;margin-bottom: 20px;margin-left: 10 px;')
+            br
+            input.form-control.input-lg(type='password', name='password', value='', placeholder='Password')
+            .row
+              .col-xs-4.col-md-4
+                label Account type
+                select.form-control.input-lg(name='type', style='width: 170px')
+                  option(value='true') Shift manager
+                  option(value='false') Worker
+            hr
+            button.btn.btn-lg.btn-primary.btn-block.signup-btn(onclick = "remoteValidate(document.getElementById('email1').value)")
+              | Create
+      .row
+        .col-md-6.col-md-push-5
+          h4 #{message}
     script(src = 'js/jquery.min.js')
     script(src = 'js/bootstrap.min.js')
     script(src ='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js')
