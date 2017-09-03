@@ -15,7 +15,7 @@ app.use('/', bodyParser()); //creates key-value pairs request.body in app.post, 
 app.use(express.static('src/public'));
 
 app.use(session({
-	secret: process.env.secret,
+	secret: process.env.SESSION_SECRET,
 	resave: true,
 	saveUninitialized: false
 }));
@@ -48,7 +48,17 @@ Time.belongsToMany(User, {through: 'time_user'});
 Task.hasMany(Time);
 Time.belongsTo(Task);
 
-db.sync({force: true});
+db.sync({force: true})
+.then(()=>{
+	bcrypt.hash('12345o', 10, function(err, hash) {
+		User.create({
+			name: 'Omar AD',
+			email: 'omar@gmail.com',
+			password: hash,
+			isAdmin: true
+		})
+	})
+})
 
 									/* roster */
 // A function that gets all the date between 
@@ -291,23 +301,34 @@ app.get('/addWorker', function(request, response) {
 
 app.post('/addWorker', function(request, response) {
 	let name = request.body.names
-	let email = request.body.email
+	let email = request.body.typedIn
 	let password = request.body.password
 	let type = request.body.type
+	User.findOne({
+		where: {
+			email: email
+		}
+	})
+	.then((user)=>{
+		if(user){
 
-	bcrypt.hash(password, 10, function(err, hash) {
-		User.create({
-			name: name ,
-			email: email,
-			password: hash,
-			isAdmin: type
-		})
-		.then( () => {
-			response.render ('logIn')
-		})
-		.catch((err) =>{
-			throw err;
-		});
+		}
+		else{
+			bcrypt.hash(password, 10, function(err, hash) {
+				User.create({
+					name: name ,
+					email: email,
+					password: hash,
+					isAdmin: type
+				})
+				.then( () => {
+					response.render('addWorker', {message: "User has been added"})
+				})
+				.catch((err) =>{
+					throw err;
+				});
+			})
+		}
 	})
 });
 
@@ -317,7 +338,7 @@ app.get('/logout', (req,res) =>{
 		if(err){
 			throw err
 		}
-		res.render('logIn',{message: 'Successfully logged out.'})
+		res.render('logIn',{message: 'Successfully logged out.'}) // message isn't working
 	})
 })
 
